@@ -2,35 +2,19 @@ import {useState, useRef, useEffect} from 'react';
 import { useMutation } from "@tanstack/react-query";
 import {HttpService} from "../../services/HttpService.ts";
 import MasonryGrid from "../../components /MasonryGrid/MasonryGrid.tsx";
-import styled from "styled-components";
 import {TConfigItem} from "../../@types/global.ts";
+import ImageView from "../../components /ImageView/ImageView.tsx";
+import {DashboardEl, ViewMoreContainer} from "./DashboardStyles.ts";
 
 const fetchImages = (page: number, perPage: number) => {
     return HttpService.get(`photos?page=${page}&per_page=${perPage}`, {});
 };
 
-const DashboardEl = styled.div`
-    width: 100%;
-    max-width: 1384px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 24px;
-    padding-right: 24px;
-    padding-top: 24px;
-    position: relative;
-`;
-
-const ViewMoreContainer = styled.div`
-    width: 100%;
-    margin-bottom: 48px;
-    transform: translateY(-150px);
-`;
-
-const perPage = 12;
+const perPage = 24;
 const Dashboard = () => {
     const [data, setData] = useState<TConfigItem[]>([]);
     const [page, setPage] = useState(1);
-    // const [selectedImage, selectImage] = useState<TConfigItem | null>(null);
+    const [selectedImage, selectImage] = useState<TConfigItem | null>(null);
 
     const mutableData = useRef({
         isInitialFetched: false,
@@ -62,8 +46,19 @@ const Dashboard = () => {
         }
     };
 
+    const enableBodyScroll = () => {
+        const body = document.getElementsByTagName('body')[0];
+        body.removeAttribute('style');
+    }
+
+    const hideBodyScroll = () => {
+        const body = document.getElementsByTagName('body')[0];
+        body.setAttribute('style', 'overflow: hidden')
+    }
+
     const onSelectImage = (info: TConfigItem) => {
-        console.log(info, 'info');
+        hideBodyScroll();
+        selectImage(info);
     }
 
     useEffect(() => {
@@ -100,10 +95,22 @@ const Dashboard = () => {
 
     return (
         <DashboardEl>
+            {
+                Boolean(selectedImage) && (
+                    <ImageView
+                        imageInformation={selectedImage as TConfigItem}
+                        onClose={() => {
+                            enableBodyScroll();
+                            selectImage(null)
+                        }}
+                    />
+                )
+            }
             <MasonryGrid
                 configuration={data}
                 columnsCount={3}
                 gap={24}
+                onSelectImage={onSelectImage}
             />
             <ViewMoreContainer ref={loaderRef}>
                 <p>Loading...</p>

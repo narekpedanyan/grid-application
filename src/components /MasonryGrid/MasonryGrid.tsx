@@ -1,24 +1,13 @@
 import {FC, useMemo} from "react";
-import styled from "styled-components";
 import LazyImage from "../LazyImage/LazyImage.tsx";
 import {TConfigItem} from "../../@types/global.ts";
+import {Column, Grid, ImageWrapper, StyledLink} from "./MasonryGridStyles.ts";
 
-const Grid = styled.div<{ columnCount: number; gap: number; }>`
-  width: 100%;
-  display: grid;
-  align-items: start;
-  grid-template-columns: repeat(${(props) => props.columnCount}, minmax(0, 1fr));
-  grid-column-gap: ${(props) => props.gap}px;
-`;
-
-const Column = styled.div<{ gap: number }>`
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 24px;
-`;
+import newTabIcon from "../../assets/icons/new-tab.svg";
 
 interface TMasonryGridProps {
     configuration: TConfigItem[];
+    onSelectImage: (value: TConfigItem) => void;
     columnsCount?: number;
     gap?: number;
 }
@@ -27,6 +16,7 @@ const MasonryGrid: FC<TMasonryGridProps> = ({
 configuration,
 columnsCount = 3,
 gap = 24,
+onSelectImage,
 }) => {
     const columns = useMemo(
         () => {
@@ -41,23 +31,32 @@ gap = 24,
         }, [configuration, columnsCount]
     );
     return (
-        <Grid columnCount={columnsCount} gap={gap}>
+        <Grid columncount={columnsCount} gap={gap}>
             {
                 columns.map((rows: TConfigItem[], index) => {
                     return (
                         <Column key={index} gap={gap}>
                             {
                                 rows.map((item: TConfigItem, rowIndex) => {
-                                    const { urls, alt_description: altDescription } = item;
+                                    const { id, urls, alt_description: altDescription } = item;
                                     const regularSrc = urls?.regular;
 
                                     return (
-                                        <div key={`index${rowIndex}`}>
-                                            <LazyImage
-                                                src={regularSrc}
-                                                alt={altDescription}
-                                            />
-                                        </div>
+                                        <>
+                                            <ImageWrapper onClick={() => onSelectImage(item)}>
+                                                <LazyImage
+                                                    src={regularSrc}
+                                                    alt={altDescription}
+                                                />
+                                                <StyledLink
+                                                    key={`index${rowIndex}`}
+                                                    onClick={() => onSelectImage(item as TConfigItem)}
+                                                    to={`/images/${id}`}
+                                                >
+                                                    <img src={newTabIcon} alt="" />
+                                                </StyledLink>
+                                            </ImageWrapper>
+                                        </>
                                     )
                                 })
                             }
