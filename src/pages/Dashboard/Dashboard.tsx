@@ -1,8 +1,9 @@
 import {useState, useRef, useEffect} from 'react';
 import { useMutation } from "@tanstack/react-query";
 import {HttpService} from "../../services/HttpService.ts";
-import MasonryGrid, {TConfigItem} from "../../components /MasonryGrid/MasonryGrid.tsx";
+import MasonryGrid from "../../components /MasonryGrid/MasonryGrid.tsx";
 import styled from "styled-components";
+import {TConfigItem} from "../../@types/global.ts";
 
 const fetchImages = (page: number, perPage: number) => {
     return HttpService.get(`photos?page=${page}&per_page=${perPage}`, {});
@@ -15,6 +16,8 @@ const DashboardEl = styled.div`
     margin-right: auto;
     padding-left: 24px;
     padding-right: 24px;
+    padding-top: 24px;
+    position: relative;
 `;
 
 const ViewMoreContainer = styled.div`
@@ -27,6 +30,7 @@ const perPage = 12;
 const Dashboard = () => {
     const [data, setData] = useState<TConfigItem[]>([]);
     const [page, setPage] = useState(1);
+    // const [selectedImage, selectImage] = useState<TConfigItem | null>(null);
 
     const mutableData = useRef({
         isInitialFetched: false,
@@ -57,6 +61,10 @@ const Dashboard = () => {
             getData.mutate({ page: page + 1, perPage: perPage });
         }
     };
+
+    const onSelectImage = (info: TConfigItem) => {
+        console.log(info, 'info');
+    }
 
     useEffect(() => {
         if (!mutableData.current?.isInitialFetched) {
