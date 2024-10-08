@@ -5,16 +5,18 @@ import MasonryGrid from "../../components /MasonryGrid/MasonryGrid.tsx";
 import {TConfigItem} from "../../@types/global.ts";
 import ImageView from "../../components /ImageView/ImageView.tsx";
 import {DashboardEl, ViewMoreContainer} from "./DashboardStyles.ts";
+import { useLocation } from 'react-router-dom';
 
 const fetchImages = (page: number, perPage: number) => {
     return HttpService.get(`photos?page=${page}&per_page=${perPage}`, {});
 };
 
-const perPage = 24;
 const Dashboard = () => {
     const [data, setData] = useState<TConfigItem[]>([]);
     const [page, setPage] = useState(1);
     const [selectedImage, selectImage] = useState<TConfigItem | null>(null);
+    const { pathname } = useLocation();
+    const perPage = 24;
 
     const mutableData = useRef({
         isInitialFetched: false,
@@ -46,18 +48,7 @@ const Dashboard = () => {
         }
     };
 
-    const enableBodyScroll = () => {
-        const body = document.getElementsByTagName('body')[0];
-        body.removeAttribute('style');
-    }
-
-    const hideBodyScroll = () => {
-        const body = document.getElementsByTagName('body')[0];
-        body.setAttribute('style', 'overflow: hidden')
-    }
-
     const onSelectImage = (info: TConfigItem) => {
-        hideBodyScroll();
         selectImage(info);
     }
 
@@ -93,16 +84,17 @@ const Dashboard = () => {
         };
     }, [loaderRef.current, page]);
 
+    useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to top on route change
+    }, [pathname]);
+
     return (
         <DashboardEl>
             {
                 Boolean(selectedImage) && (
                     <ImageView
                         imageInformation={selectedImage as TConfigItem}
-                        onClose={() => {
-                            enableBodyScroll();
-                            selectImage(null)
-                        }}
+                        onClose={() => selectImage(null)}
                     />
                 )
             }

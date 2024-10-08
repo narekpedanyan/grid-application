@@ -7,6 +7,10 @@ export const Grid = styled.div<{ columncount: number; gap: number; }>`
   align-items: start;
   grid-template-columns: repeat(${(props) => props.columncount}, minmax(0, 1fr));
   grid-column-gap: ${(props) => props.gap}px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(1, minmax(0, 1fr)); /* Change to one column */
+    }
 `;
 
 export const Column = styled.div<{ gap: number }>`
@@ -56,6 +60,26 @@ export const StyledLink = styled(Link)`
           filter: brightness(0.8); /* Example effect on the image inside the link */
         }
     }
+    img {
+        width: 28px;
+        height: 28px;
+        transition: filter 0.3s ease;
+    }
+`;
+
+export const FullImageViewLink = styled.a`
+    text-decoration: none;
+    color: inherit;
+    position: absolute;
+    right: 12px;
+    top: 64px;
+    display: none;
+    width: 42px;
+    height: 42px;
+    background-color: rgba(250, 250, 250, 0.85);
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
     img {
         width: 28px;
         height: 28px;

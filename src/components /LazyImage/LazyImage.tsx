@@ -19,7 +19,7 @@ const LazyImage = ({ src, alt }: ImageItemProps) => {
                 }
             },
             {
-                rootMargin: '100px', // Load the image slightly before it becomes visible
+                rootMargin: '200px',
                 threshold: 0.1,
             }
         );
